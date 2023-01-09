@@ -4,7 +4,7 @@ output: html_document
 date: "`r Sys.Date()`"
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 library(readxl)
 library(tidyverse)
@@ -52,7 +52,7 @@ foraging_ev %>% select(-Threat_Response) %>%
 
 Eighteen actions had at least one study associated with it, 9 had at least 2 studies, and two actions had more than 10 studies associated with them. Twenty-nine of the 47 (62%) had no evidence supporting them, which is consistent with the database as a whole. The tested, positive impact actions related to foraging are all over the board. Most, however, are focused on preserving or maintaining some form of intact foraging habitat. Few studies were designed to create foraging habitat or food availability.  
 
-```{r}
+```{r message=FALSE}
 foraging_ev %>% filter(Outcome != "no evidence") %>%
   group_by(Outcome) %>% 
   summarize(numberActions = n()) %>% 
@@ -67,7 +67,7 @@ foraging_ev %>% filter(Outcome != "no evidence") %>%
 ```
 
 For those actions that have any number of supporting studies, we can look at the breakdown of how they are distributed across Action Categories and ICUN Threats. Most actions are related to mitigating the effects of agriculture and other modifications to ecosystems. 
-```{r}
+```{r message=FALSE}
 foraging_ev %>% filter(Number_of_Studies > 0) %>%
   group_by(Action_Category, IUCN_threat) %>% 
   summarize(numberActions = n()) %>% 
@@ -85,7 +85,7 @@ foraging_ev %>% filter(Number_of_Studies > 0) %>%
 
 And we an break these into further IUCN specific threats actions targeting non-timber crops and urbanization / habitat conversion are at the top of the list.
 
-```{r}
+```{r message=FALSE}
 foraging_ev %>% filter(Number_of_Studies > 0) %>%
   group_by(Action_Category, IUCN_threat, IUCN_specific_threat) %>% 
   summarize(numberActions = n()) %>% 
@@ -99,12 +99,13 @@ foraging_ev %>% filter(Number_of_Studies > 0) %>%
         legend.position = "none")+
   labs(title = "IUCN Specific Threats Addressed by Conservation Studies")
 ```
-### Where's the Evidence?
+
+#### Where's the Evidence?
 But are there major threat categories that haven't really been tested? The majority of identified actions don't have any evidence to either support or refute them. 
 
 Foraging-related conservation actions targeting aspects of Climate Change, Urban Development, Light Pollution, and Transportation & Corridors need additional attention. These four are all wrapped together in a broader human-dominated landscape context, and finding appropriate foraging remedies in these areas may be very important.
 
-```{r}
+```{r message=FALSE}
 foraging_ev %>% mutate(HasEvidence = ifelse(Number_of_Studies > 0, "Has Evidence", "No Evidence")) %>% 
   group_by(Action_Category, IUCN_threat, HasEvidence) %>% 
   summarize(numberActions = n()) %>% 
@@ -119,10 +120,10 @@ foraging_ev %>% mutate(HasEvidence = ifelse(Number_of_Studies > 0, "Has Evidence
         legend.position = "none")
 ```
 
-#### Specific Actions Wihtout Evidence
+#### Specific Actions Without Evidence
 Unsurprisingly there are a number of actions targeted at land use change -- from agriculture as well as other modifications. These specific conservation actions are mostly targeted at creating or maintaining various foraging habitats and creating connectivity between roost and foraging areas. There are many impediments that will limit bat commuting paths. Lights, traffic, and large open spaces may present barriers to some species, while others will prefer to commute and foraging in these wide open spaces.
 
-```{r}
+```{r message=FALSE}
 foraging_ev %>% filter(Number_of_Studies == 0) %>%
   select(-one_of(c("Threat_Response", "Number_of_Studies", "Outcome"))) %>% 
   kable() %>%
